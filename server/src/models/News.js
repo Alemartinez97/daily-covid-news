@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const newsSchema = new mongoose.Schema({
-  provider:{
-  type: String,
+  provider: {
+    type: String,
   },
   category: {
     type: String,
