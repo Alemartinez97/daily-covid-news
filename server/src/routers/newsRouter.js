@@ -3,19 +3,53 @@ const router = express.Router();
 const request = require("request");
 var moment = require("moment");
 const { News } = require("../models/News");
+let dates = [0];
+//will search the news in the database by title, source and date ranges
+const handleFind = async (
+  search,
+  providers,
+  startDate,
+  endDate,
+  order,
+  pagination
+) => {
+  dates = await News.find({
+    title: { $regex: search },
+    provider: { $regex: providers },
+    publishedAt: {
+      $gte: moment(startDate).format(),
+      $lt: moment(endDate).format(),
+    },
+  })
+    .sort({ publishedAt: parseInt(order) }) //pagination and order
+    .limit(parseInt(pagination));
+  return dates;
+};
 router.get("/news", async (req, res) => {
   try {
-    const { search, providers, categories, startDate, endDate,pagination,order } = req.query;
-    const apiKey = "5b2c9d09e2d8465b8fa56f818bfb582f";
-    //if the title matches it does not hit the external api
-    const dates = await News.find({
-      title: search,
+    const {
+      search,
+      providers,
+      categories,
+      startDate,
+      endDate,
+      pagination,
+      order,
+    } = req.query;
+    
+    const variant1 = await News.find({
       publishedAt: {
-        $gte: moment(startDate).format(),
-        $lt: moment(endDate).format(),
+        $lt: moment(endDate).subtract(5, "days").format(),
       },
     });
-    if (dates.length > 0) {
+//when the news is more than 5 days old it will be deleted
+    for (let i in variant1) {
+      await News.deleteOne({ _id: variant1[i]._id });
+    }
+
+    const apiKey = "70165fcfa7334ae59c3405314c6c6cde";
+    handleFind(search, providers, startDate, endDate, order, pagination);
+    if (dates.length > 1) {
       return res.status(200).send(dates);
     }
     request(
@@ -38,7 +72,7 @@ router.get("/news", async (req, res) => {
               category: category,
               title: title,
               description: description,
-              publishedAt: publishedAt,
+              publishedAt: moment(publishedAt).format(),
               imageUrl: imageUrl,
               sourceUrl: sourceUrl,
             });
@@ -47,21 +81,11 @@ router.get("/news", async (req, res) => {
         }
       }
     );
-    //search the database by title, source, date, pagination and order
-    const newsCovid = await News.find({
-      title:{$regex:search},
-      provider: providers,
-      publishedAt: {
-        $gte: moment(startDate).format(),
-        $lt: moment(endDate).format(),
-      },
-    }).sort( { publishedAt : parseInt(order) } ).limit(parseInt(pagination));
-    res.status(200).send(newsCovid);
+    handleFind(search, providers, startDate, endDate, order, pagination);
+    res.status(200).send(dates);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .send({ mensaje: "Error desconcido, Contactarse con soporte" });
+    res.status(400).send({ mensaje: "customer error" });
   }
 });
 router.delete("/api/task", async (req, res) => {
