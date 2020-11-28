@@ -21,4 +21,4 @@ app.use(express.json());
 
 app.use(newsRouters);
 app.use(userRoutes);
-app.listen(PORT, () => console.log("Iniciando app en puerto $(PORT)"));
+app.listen(PORT, () => console.log("Starting app in port",PORT));

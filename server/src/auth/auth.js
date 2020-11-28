@@ -44,7 +44,7 @@ passport.use(
         }
 
         return done(null, user, { message: "Login successfull" });
-      } catch (e) {
+      } catch (e) { 
         return done(e);
       }
     }

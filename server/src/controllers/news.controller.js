@@ -58,7 +58,7 @@ exports.news = async (req, res) => {
       pagination
     );
     if (dates.length > 1) {
-      return res.status(201).send(dates);
+      return res.status(200).send(dates);
     }
     request(
       `https://api.jornalia.net/api/v1/articles?apiKey=${apiKey}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`,

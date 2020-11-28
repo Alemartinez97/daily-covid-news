@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  res.send("Hello World");
+  res.send("Succes");
 });
 
 router.post(
@@ -37,7 +37,9 @@ router.post("/login", async (req, res, next) => {
         return res.json({ token });
       });
     } catch (e) {
-      return next(e);
+      res.status(401).json({
+        error: new Error("Invalid request!"),
+      });
     }
   })(req, res, next);
 });
