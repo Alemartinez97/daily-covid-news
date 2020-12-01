@@ -60,22 +60,8 @@ const Form = (props) => {
     handleSubmit,
     setProvider,
     provider,
+
   } = props;
-  const handleProvider = (e) => {
-    debugger;
-    if (data.providers === "Clarin") {
-      setProvider("Clarín");
-    }
-    if (data.providers === "Pagina12") {
-      setProvider("Página 12");
-    }
-    if (data.providers === "LaNacion") {
-      setProvider("La%20Nación");
-    }
-    if (data.providers === "Telam") {
-      setProvider("Télam");
-    }
-  };
   return (
     <div className={classes.paper}>
       <form
@@ -144,7 +130,7 @@ const Form = (props) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <TextField
               value={data.startDate}
               onChange={(e) =>
@@ -158,7 +144,10 @@ const Form = (props) => {
               InputLabelProps={{
                 shrink: true,
               }}
+              fullWidth
             />
+          </Grid>
+          <Grid item xs={6}>
             <TextField
               value={data.endDate}
               onChange={(e) =>
@@ -172,17 +161,18 @@ const Form = (props) => {
               InputLabelProps={{
                 shrink: true,
               }}
+              fullWidth
             />
           </Grid>
         </Grid>
         <Grid>
-          <Button
+        <Button
             color="primary"
-            type="submit"
-            disabled={submitting}
+            // type="submit"
+            // disabled={submitting}
             variant="contained"
             style={{ marginRight: 10 }}
-            onClick={() => handleProvider()}
+            onClick={()=>handleSubmit()}
           >
             Buscar
           </Button>
@@ -197,6 +187,7 @@ const Form = (props) => {
           </Button>
         </Grid>
       </form>
+      {/* <button onClick={()=>handleSubmit()}>OK</button> */}
     </div>
   );
 };

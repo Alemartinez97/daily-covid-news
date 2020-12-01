@@ -10,10 +10,13 @@ import Politics from "./components/news/politics";
 import Economy from "./components/news/economy";
 import International from "./components/news/international";
 import Health from "./components/news/Health";
+import Society from "./components/news/society";
+import Search from "./components/news/search";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import api from "./components/utils/api";
 import { connect } from "react-redux";
 import { addNews } from "./components/actions/index";
+import moment from 'moment';
 
 import routes from "./components/routes";
 import SearchAppBar from "./components/forms/SearchAppBar";
@@ -25,7 +28,9 @@ const App = connect(
   useEffect(() => {
     api
       .get(
-        "/allthenews?search=Coronavirus&providers=Clarin&searchindataclass=Clarín&categories=NACIONALES%2CLOCALES%2CINTERNACIONALES%2CULTIMAS_NOTICIAS%2CPOLITICA%2CECONOMIA%2CSALUD&startDate=2020-10-01&endDate=2020-11-30"
+        `/allthenews?search=Coronavirus&providers=Clarin&searchindataclass=Clarín&categories=NACIONALES%2CLOCALES%2CINTERNACIONALES%2CPOLITICA%2CECONOMIA%2CSALUD&startDate=${moment()
+          .subtract(2, "days")
+          .format()}&endDate=${moment().format()}`
       )
       .then((result) => {
         props.addNews(result.data);
@@ -41,6 +46,8 @@ const App = connect(
         <Route exact path={routes.economy} component={Economy} />
         <Route exact path={routes.international} component={International} />
         <Route exact path={routes.health} component={Health} />
+        <Route exact path={routes.society} component={Society} />
+        <Route exact path={routes.search} component={Search} />
       </Switch>
     </BrowserRouter>
   );

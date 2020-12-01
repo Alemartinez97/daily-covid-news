@@ -16,6 +16,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import { withRouter } from "react-router-dom";
 import SearchNews from "./searchNews";
+import { Button } from "@material-ui/core";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -34,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
   search: {
     display: "flex",
     alignItems: "center",
+    margin: "0 auto",
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -101,9 +103,9 @@ const Menu = ({ history }) => {
       <CssBaseline />
       <AppBar
         position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
+        // className={clsx(classes.appBar, {
+        //   [classes.appBarShift]: open,
+        // })}
       >
         <Toolbar className={classes.toolbar}>
           <IconButton
@@ -118,7 +120,18 @@ const Menu = ({ history }) => {
           <Typography variant="h6" noWrap>
             Covid al dia
           </Typography>
-          <SearchNews/>
+          <Button onClick={() => history.push("/society") } margin="25px" size="large">Sociedad</Button>
+          <Button onClick={() => history.push("/economy")} size="large">Economía</Button>
+          <Button onClick={() => history.push("/politics")} size="large">Politica</Button>
+          <Button onClick={() => history.push("/international")} size="large">
+            Internacionales
+          </Button>
+          <Button onClick={() => history.push("/health")} size="large">
+            Salud
+          </Button>
+          <Button onClick={() => history.push("/login")} size="large">Login</Button>
+          <Button onClick={() => history.push("/signup")} size="large">Registrarse</Button>
+          <SearchNews className={classes.search} />
         </Toolbar>
       </AppBar>
       <Drawer
@@ -141,6 +154,11 @@ const Menu = ({ history }) => {
         </div>
         <Divider />
         <List>
+          <ListItem button>
+            <ListItemIcon onClick={() => history.push("/society")}>
+              Sociedad
+            </ListItemIcon>
+          </ListItem>
           <ListItem button>
             <ListItemIcon onClick={() => history.push("/economy")}>
               Economía

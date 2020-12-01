@@ -1,12 +1,12 @@
 import { ADD_SEARCHNEWS } from "../constant/actions-types";
 
-const news = (state = [], action) => {
+const searchNews = (state = [], action) => {
   const { type, payload } = action;
   switch (type) {
     case ADD_SEARCHNEWS:
-      return payload;
+      return [...state, payload];
     default:
       return state;
   }
 };
-export default news;
+export default searchNews;

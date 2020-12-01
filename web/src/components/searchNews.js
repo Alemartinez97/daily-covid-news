@@ -11,6 +11,7 @@ import { useSnackbar } from "notistack";
 import Dialog from "@material-ui/core/Dialog";
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
+
 const useStyles = makeStyles((theme) => ({
   dialog: {
     padding: 0,
@@ -20,49 +21,59 @@ const useStyles = makeStyles((theme) => ({
 }));
 const SearchNews = (props) => {
   const classes = useStyles();
-  const { reset, submitting, event, errors, touched, task } = props;
+  const { reset, submitting, event, errors, touched, task, history,searchNew } = props;
   const [open, setOpen] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [searchNews, setSearchNews] = React.useState({
-    search: "",
-    category: "",
-    providers: "",
-    startDate: "",
-    endDate: "",
+    search: "Coronavirus",
+    category: "POLITICA",
+    providers: "Clarín",
+    startDate: "2020/11/01",
+    endDate: "2020/11/30",
   });
-  const [provider, setProvider] = useState();
+  const [provider, setProvider] = useState("Clarín");
+  const [data, setData] = useState([]);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
+  // React.useEffect(() => {
+  //   handleSubmit();
+  // });
   const handleSubmit = () => {
-    debugger
+    if (searchNews.providers === "Clarin") {
+      setProvider("Clarín");
+    }
+    if (searchNews.providers === "Pagina12") {
+      setProvider("Página 12");
+    }
+    if (searchNews.providers === "LaNacion") {
+      setProvider("La%20Nación");
+    }
+    if (searchNews.providers === "Telam") {
+      setProvider("Télam");
+    }
     return api
       .get(
-        `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}&pagination=10&order=-1`
+        `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}`
       )
       .then((result) => {
-        debugger
-        console.log("data",result.data)
-        props.addSearchNews(result.data);
+        // setData(result.data);
+        debugger;
+        props.addSearchNews({...searchNew, ...result.data });
+        enqueueSnackbar("La Busqueda fue realizada con exito", {
+          variant: "success",
+        });
+        history.push("/search");
+      })
+      .catch((err) => {
+        enqueueSnackbar("Error, La busqueda no se realizo. " + err.msg, {
+          variant: "error",
+        });
+        console.error("Mutation error:", err);
       });
-    // .then((data) => {
-    //   props.editTask(taskData);
-    //   enqueueSnackbar(
-    //     "La tarea " + taskData.taskname + " fue actualizada con exito ",
-    //     {
-    //       variant: "success",
-    //     }
-    //   );
-    // })
-    // .catch((err) => {
-    //   enqueueSnackbar("Error, La tarea no se actualizo. " + err.msg, {
-    //     variant: "error",
-    //   });
-    //   console.error("Mutation error:", err);
-    // });
   };
   const body = (
     <Form
@@ -104,11 +115,16 @@ const SearchNews = (props) => {
     </>
   );
 };
+const mapStateToProps = (state) => {
+  return { searchNew: state.searchNews };
+};
 const mapDispatchToProps = (dispatch) => {
-  debugger
   return {
-    addSearchNews: (searchnews) => dispatch(addSearchNews(searchnews)),
+    addSearchNews: (searchNews) => dispatch(addSearchNews(searchNews)),
   };
 };
 
-export default connect(mapDispatchToProps)(withRouter(SearchNews));
+export default connect(
+  mapDispatchToProps,
+  mapStateToProps
+)(withRouter(SearchNews));

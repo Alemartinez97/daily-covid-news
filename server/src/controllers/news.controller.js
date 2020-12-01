@@ -1,13 +1,12 @@
 const express = require("express");
-const router = express.Router();
-const request = require("request");
+const axios = require("axios");
 var moment = require("moment");
 const { News } = require("../models/News");
-const { search } = require("../routers/newsRouter");
-const apiKey = "d0fffad6e4e04742afe9495b395b67b7";
+const apiKey = "9049dd7d1d324e55a8488e3b545aba7f";
 let dates = [0];
 let variant1 = [0];
 let variant2 = [0];
+let timeCall;
 //when the news is more than 5 days old it will be deleted
 const handleDeleteWithMoreThanFiveDays = async () => {
   variant1 = await News.find({
@@ -65,7 +64,6 @@ exports.news = async (req, res) => {
       order,
       searchindataclass,
     } = req.query;
-    console.log("callback",req.query)
     await handleDeleteWithMoreThanFiveDays();
 
     await handleFind(
@@ -77,39 +75,35 @@ exports.news = async (req, res) => {
       pagination
     );
     if (dates.length > 1) {
-      console.log("resultado",dates)
-      return res.status(200).send(dates);
+      res.status(201).send(dates);
     }
-    await request(
-      `https://api.jornalia.net/api/v1/articles?apiKey=${apiKey}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`,
-      async (err, response, body) => {
-        if (!err) {
-          var variant = JSON.parse(body);
-          for (let s = 0; s < variant.articles.length; s++) {
-            const {
-              category,
-              title,
-              description,
-              publishedAt,
-              imageUrl,
-              sourceUrl,
-            } = variant.articles[s];
-
-            const news = new News({
-              provider: variant.articles[s].provider.name,
-              category: category,
-              title: title,
-              description: description,
-              publishedAt: moment(publishedAt).format(),
-              imageUrl: imageUrl,
-              sourceUrl: sourceUrl,
-            });
-            await news.save();
-            await handleRemoveRepeats(title);
-          }
-        }
-      }
+    const body = await axios.get(
+      `https://api.jornalia.net/api/v1/articles?apiKey=${apiKey}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`
     );
+    // timeCall = body.headers.date;
+    for (let s = 0; s < body.data.articles.length; s++) {
+      const {
+        _id,
+        category,
+        title,
+        description,
+        publishedAt,
+        imageUrl,
+        sourceUrl,
+      } = body.data.articles[s];
+
+      const news = new News({
+        provider: body.data.articles[s].provider.name,
+        category: category,
+        title: title,
+        description: description,
+        publishedAt: moment(publishedAt).format(),
+        imageUrl: imageUrl,
+        sourceUrl: sourceUrl,
+      });
+      await news.save();
+      await handleRemoveRepeats(title);
+    }
     await handleFind(
       search,
       searchindataclass,
@@ -118,7 +112,6 @@ exports.news = async (req, res) => {
       order,
       pagination
     );
-    console.log("resultado",dates)
     res.status(200).send(dates);
   } catch (error) {
     console.error(error);
@@ -129,40 +122,35 @@ exports.allthenews = async (req, res) => {
   try {
     const { search, providers, categories, startDate, endDate } = req.query;
     await handleDeleteWithMoreThanFiveDays();
-    await request(
-      `https://api.jornalia.net/api/v1/articles?apiKey=${apiKey}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`,
-      async (err, response, body) => {
-        if (!err) {
-          var variant = JSON.parse(body);
-          for (let s = 0; s < variant.articles.length; s++) {
-            const {
-              _id,
-              category,
-              title,
-              description,
-              publishedAt,
-              imageUrl,
-              sourceUrl,
-            } = variant.articles[s];
-
-            const news = new News({
-              idNews: _id,
-              provider: variant.articles[s].provider.name,
-              category: category,
-              title: title,
-              description: description,
-              publishedAt: moment(publishedAt).format(),
-              imageUrl: imageUrl,
-              sourceUrl: sourceUrl,
-            });
-            await news.save();
-            await handleRemoveRepeats(title);
-          }
-        }
-      }
+    const body = await axios.get(
+      `https://api.jornalia.net/api/v1/articles?apiKey=${apiKey}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`
     );
-    // await News.deleteMany();
-    const all = await News.find();
+    for (let s = 0; s < body.data.articles.length; s++) {
+      const {
+        _id,
+        category,
+        title,
+        description,
+        publishedAt,
+        imageUrl,
+        sourceUrl,
+      } = body.data.articles[s];
+
+      const news = new News({
+        provider: body.data.articles[s].provider.name,
+        category: category,
+        title: title,
+        description: description,
+        publishedAt: moment(publishedAt).format(),
+        imageUrl: imageUrl,
+        sourceUrl: sourceUrl,
+      });
+      await news.save();
+      await handleRemoveRepeats(title);
+    }
+
+    const all = await News.find({ title: { $regex: "coronavirus" } });
+
     res.status(200).send(all);
   } catch (error) {
     console.error(error);
