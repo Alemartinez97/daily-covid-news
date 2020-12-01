@@ -4,7 +4,7 @@ import MaterialTable, { MTableEditField } from "material-table";
 import Form from "./form";
 import { connect } from "react-redux";
 import api from "./utils/api";
-import { addSearchNews } from "./actions/index";
+import { setSearchNews } from "./actions/index";
 import { makeStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -21,27 +21,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 const SearchNews = (props) => {
   const classes = useStyles();
-  const { reset, submitting, event, errors, touched, task, history,searchNew } = props;
+  const {
+    reset,
+    submitting,
+    event,
+    errors,
+    touched,
+    task,
+    history,
+    searchNew,
+  } = props;
   const [open, setOpen] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [searchNews, setSearchNews] = React.useState({
-    search: "Coronavirus",
-    category: "POLITICA",
-    providers: "Clarín",
-    startDate: "2020/11/01",
-    endDate: "2020/11/30",
+    search: "",
+    category: "",
+    providers: "",
+    startDate: "",
+    endDate: "",
   });
-  const [provider, setProvider] = useState("Clarín");
-  const [data, setData] = useState([]);
+  const [provider, setProvider] = useState("");
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-  // React.useEffect(() => {
-  //   handleSubmit();
-  // });
   const handleSubmit = () => {
     if (searchNews.providers === "Clarin") {
       setProvider("Clarín");
@@ -57,12 +62,11 @@ const SearchNews = (props) => {
     }
     return api
       .get(
-        `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}`
+        `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}&order=-1`
       )
       .then((result) => {
-        // setData(result.data);
         debugger;
-        props.addSearchNews({...searchNew, ...result.data });
+        props.setSearchNews(result.data);
         enqueueSnackbar("La Busqueda fue realizada con exito", {
           variant: "success",
         });
@@ -115,16 +119,10 @@ const SearchNews = (props) => {
     </>
   );
 };
-const mapStateToProps = (state) => {
-  return { searchNew: state.searchNews };
-};
 const mapDispatchToProps = (dispatch) => {
   return {
-    addSearchNews: (searchNews) => dispatch(addSearchNews(searchNews)),
+    setSearchNews: (search) => dispatch(setSearchNews(search)),
   };
 };
 
-export default connect(
-  mapDispatchToProps,
-  mapStateToProps
-)(withRouter(SearchNews));
+export default connect(null, mapDispatchToProps)(withRouter(SearchNews));

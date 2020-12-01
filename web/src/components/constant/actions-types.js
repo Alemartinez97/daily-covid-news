@@ -1,2 +1,2 @@
 export const ADD_NEWS="ADD_NEWS";
-export const ADD_SEARCHNEWS="ADD_SEARCHNEWS";
+export const SET_SEARCHNEWS="SET_SEARCHNEWS";

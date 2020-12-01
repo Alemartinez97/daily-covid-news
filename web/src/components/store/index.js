@@ -1,9 +1,9 @@
 import { createStore, combineReducers} from "redux";
 
 import news from "../reducers/news";
-import searchnews from "../reducers/searchNews";
+import search from "../reducers/search";
 
-const reducers = combineReducers({ news,searchnews });
+const reducers = combineReducers({ news,search });
 
 const store = createStore(
     reducers,

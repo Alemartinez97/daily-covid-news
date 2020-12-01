@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   toolbar: {
-    background: "blue",
+    // background: "#69f0ae",
   },
   appBar: {
     transition: theme.transitions.create(["margin", "width"], {
@@ -117,20 +117,23 @@ const Menu = ({ history }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            Covid al dia
+          <Typography  noWrap>
+            CORONAVIRUS HOY
           </Typography>
-          <Button onClick={() => history.push("/society") } margin="25px" size="large">Sociedad</Button>
-          <Button onClick={() => history.push("/economy")} size="large">Economía</Button>
-          <Button onClick={() => history.push("/politics")} size="large">Politica</Button>
-          <Button onClick={() => history.push("/international")} size="large">
-            Internacionales
+          <Button
+            onClick={() => history.push("/login")}
+            color="inherit"
+            size="large"
+          >
+            Login
           </Button>
-          <Button onClick={() => history.push("/health")} size="large">
-            Salud
+          <Button
+            onClick={() => history.push("/signup")}
+            color="inherit"
+            size="large"
+          >
+            Registrarse
           </Button>
-          <Button onClick={() => history.push("/login")} size="large">Login</Button>
-          <Button onClick={() => history.push("/signup")} size="large">Registrarse</Button>
           <SearchNews className={classes.search} />
         </Toolbar>
       </AppBar>

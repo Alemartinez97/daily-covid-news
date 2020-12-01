@@ -12,6 +12,11 @@ const useStyles = makeStyles((theme) => ({
   card: {
     height: 250,
     margin: 10,
+    overflow: 'scroll',
+  },
+  cardImage: {
+    height: 250,
+    margin: 10,
   },
   cover: {
     width: "90%",
@@ -50,7 +55,7 @@ export default function MediaControlCard({ news }) {
               </Card>
             </Grid>
             <Grid item xs={3} spacing={2}>
-              <Card className={classes.card}>
+              <Card className={classes.cardImage}>
                 <CardMedia className={classes.cover} image={e.imageUrl} />
               </Card>
             </Grid>
