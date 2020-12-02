@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const moment = require("moment");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
@@ -31,9 +31,11 @@ router.post("/login", async (req, res, next) => {
 
       req.login(user, { session: false }, async (err) => {
         if (err) return next(err);
-        const body = { _id: user._id, email: user.email };
-
-        const token = jwt.sign({ user: body }, "top_secret");
+        const body = {
+          _id: user._id,
+          email: user.email,
+        };
+        const token = jwt.sign(body, "top_secret");
         return res.json({ token });
       });
     } catch (e) {

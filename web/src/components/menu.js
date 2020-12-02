@@ -17,6 +17,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import { withRouter } from "react-router-dom";
 import SearchNews from "./searchNews";
 import { Button } from "@material-ui/core";
+import { useSnackbar } from "notistack";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -88,15 +89,34 @@ const Menu = ({ history }) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const logout = () => {
-    console.log("logout"); // eslint-disable-line
-  };
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+  React.useEffect(() => {
+    handleDeleteSession();
+  });
+  const value = localStorage.getItem("token");
+  const expireSession = () => {
+    if (value) {
+      localStorage.clear();
+      history.push("/login");
+      enqueueSnackbar("Sessión Expirada", {
+        variant: "warning",
+      });
+    }
+  };
+  //the session will expire every 5 minutes
+  const handleDeleteSession = () => {
+    setTimeout(expireSession, 300000);
+  };
+  const logout = () => {
+    localStorage.clear();
+    history.push("/login");
   };
   return (
     <div className={classes.root}>
@@ -117,9 +137,7 @@ const Menu = ({ history }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography  noWrap>
-            CORONAVIRUS HOY
-          </Typography>
+          <Typography noWrap>CORONAVIRUS HOY</Typography>
           <Button
             onClick={() => history.push("/login")}
             color="inherit"
@@ -183,9 +201,7 @@ const Menu = ({ history }) => {
             </ListItemIcon>
           </ListItem>
           <ListItem button>
-            <ListItemIcon onClick={() => history.push("/login")}>
-              Logout
-            </ListItemIcon>
+            <ListItemIcon onClick={() => logout()}>Logout</ListItemIcon>
           </ListItem>
         </List>
       </Drawer>

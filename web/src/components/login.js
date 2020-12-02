@@ -25,26 +25,30 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Login = (props) => {
-  const { success, error, loading,history } = props;
+  const { success, error, loading, history } = props;
   const classes = useStyles();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
+  const [password, setPassword] = useState("");
   const handleSubmit = (response) => {
-    debugger
     const values = {
       email,
-      pass,
+      password,
     };
-    api
-      .post("/signup", values)
+    return api
+      .post("/login", values)
       .then((result) => {
-        enqueueSnackbar("Usuario " + email + " Registrado con exito ", {
+        if (result.data.token) {
+          localStorage.setItem("token", JSON.stringify(result.data.token));
+        }
+        console.log(localStorage)
+        enqueueSnackbar("Usuario " + email + " iniciar de sesión con exito ", {
           variant: "success",
         });
+        history.push("/");
       })
       .catch((err) => {
-        enqueueSnackbar("El usuario " + email + " no se registro " + err, {
+        enqueueSnackbar("El usuario " + email + " no iniciar  sesión  " + err, {
           variant: "error",
         });
         console.error("Mutation error:", err);
@@ -53,7 +57,7 @@ const Login = (props) => {
   return (
     <Container maxWidth="xs">
       <Paper className={classes.root} justify-content="center">
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form>
           <Grid>
             <Grid item xs={12}>
               <TextField
@@ -70,20 +74,20 @@ const Login = (props) => {
             <Grid item xs={12}>
               <TextField
                 label="Contraseña"
-                name="pass"
+                name="password"
                 type="password"
                 margin="normal"
-                value={pass}
+                value={password}
                 className={classes.textField}
-                onChange={(e) => setPass(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
               <Button
-                type="submit"
+                // type="submit"
                 variant="contained"
                 color="primary"
-                //    onClick={() => history.push('/')}
+                onClick={() => handleSubmit()}
               >
                 Iniciar sesiôn
               </Button>

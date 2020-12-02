@@ -37,9 +37,10 @@ const Signup = ({ history }) => {
     return api
       .post("/signup", values)
       .then((result) => {
-        enqueueSnackbar("Usuario " + email + " Registrado con exito ", {
+        enqueueSnackbar("Usuario " + email + " registrado con exito ", {
           variant: "success",
         });
+        history.push("/login");
       })
       .catch((err) => {
         enqueueSnackbar("El usuario " + email + " no se registro " + err, {
@@ -51,7 +52,7 @@ const Signup = ({ history }) => {
   return (
     <Container maxWidth="xs">
       <Paper className={classes.root}>
-        <form method="POST" action={"http://localhost:4000/signup"} noValidate autoComplete="on">
+        <form>
           <Grid container>
             <Typography variant="h4">Crear nueva cuenta</Typography>
             <Grid item xs={12}>
@@ -78,7 +79,11 @@ const Signup = ({ history }) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary">
+              <Button
+                onClick={() => handleSubmit()}
+                variant="contained"
+                color="primary"
+              >
                 Registrarse
               </Button>
               <Button

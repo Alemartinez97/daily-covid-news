@@ -16,7 +16,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import api from "./components/utils/api";
 import { connect } from "react-redux";
 import { addNews } from "./components/actions/index";
-import moment from 'moment';
+import moment from "moment";
 
 import routes from "./components/routes";
 import SearchAppBar from "./components/forms/SearchAppBar";

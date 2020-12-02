@@ -65,11 +65,11 @@ const SearchNews = (props) => {
         `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}&order=-1`
       )
       .then((result) => {
-        debugger;
         props.setSearchNews(result.data);
         enqueueSnackbar("La Busqueda fue realizada con exito", {
           variant: "success",
         });
+        setOpen(false);
         history.push("/search");
       })
       .catch((err) => {
