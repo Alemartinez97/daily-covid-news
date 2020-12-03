@@ -1,9 +1,8 @@
 const express = require("express");
 const axios = require("axios");
 var moment = require("moment");
-require('dotenv').config()
+require("dotenv").config();
 const { News } = require("../models/News");
-// const apiKey = "f36f0dc2f3204a3c821130384e208604";
 let dates = [0];
 let variant1 = [0];
 let variant2 = [0];
@@ -39,18 +38,21 @@ const handleFind = async (
   startDate,
   endDate,
   order,
-  pagination
+  limit,
+  page
 ) => {
   dates = await News.find({
     title: { $regex: search },
-    provider: { $regex: searchindataclass },
+    // provider: { $regex: searchindataclass },
     publishedAt: {
       $gte: moment(startDate).format(),
       $lt: moment(endDate).format(),
     },
   })
     .sort({ publishedAt: parseInt(order) }) //pagination and order
-    .limit(parseInt(pagination));
+    .limit(parseInt(limit) * 1)
+    .skip((page - 1) * limit)
+    .exec();
   return dates;
 };
 exports.news = async (req, res) => {
@@ -61,9 +63,10 @@ exports.news = async (req, res) => {
       categories,
       startDate,
       endDate,
-      pagination,
+      limit,
       order,
       searchindataclass,
+      page,
     } = req.query;
     await handleDeleteWithMoreThanFiveDays();
 
@@ -73,13 +76,19 @@ exports.news = async (req, res) => {
       startDate,
       endDate,
       order,
-      pagination
+      limit,
+      page
     );
+    const count = await News.countDocuments();
     if (dates.length > 1) {
-      res.status(200).send(dates);
+      res.status(200).send({
+        dates,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+      });
     }
     const body = await axios.get(
-      `https://api.jornalia.net/api/v1/articles?apiKey=${process.env.API_KEY}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`
+      `https://api.jornalia.net/api/v1/articles?apiKey=${process.env.API_KEY}&providers=${providers}&search=${search}&category=${categories}&startDate=${startDate}&endDate=${endDate}`
     );
     // timeCall = body.headers.date;
     for (let s = 0; s < body.data.articles.length; s++) {
@@ -111,9 +120,14 @@ exports.news = async (req, res) => {
       startDate,
       endDate,
       order,
-      pagination
+      limit,
+      page
     );
-    res.status(200).send(dates);
+    res.status(200).send({
+      dates,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.error(error);
     res.status(400).send({ mensaje: "customer error" });

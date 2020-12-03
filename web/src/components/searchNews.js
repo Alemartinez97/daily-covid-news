@@ -71,10 +71,10 @@ const SearchNews = (props) => {
     debugger;
     return instance
       .get(
-        `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}&order=-1`
+        `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}&page=2&limit=5&order=-1`
       )
       .then((result) => {
-        props.setSearchNews(result.data);
+        props.setSearchNews(result.data.dates);
         enqueueSnackbar("La Busqueda fue realizada con exito", {
           variant: "success",
         });
