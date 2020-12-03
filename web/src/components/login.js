@@ -64,13 +64,13 @@ const Login = (props) => {
           localStorage.setItem("token", token);
         }
         console.log(localStorage);
-        enqueueSnackbar("Usuario " + email + " iniciar de sesión con exito ", {
+        enqueueSnackbar("Usuario " + email + " inicio  sesión con exito ", {
           variant: "success",
         });
         history.push("/");
       })
       .catch((err) => {
-        enqueueSnackbar("El usuario " + email + " no iniciar  sesión  " + err, {
+        enqueueSnackbar("El usuario " + email + " no inicio   sesión  " + err, {
           variant: "error",
         });
         console.error("Mutation error:", err);

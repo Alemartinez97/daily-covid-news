@@ -4,6 +4,7 @@ const app = express();
 const mongoose = require("mongoose");
 const newsRouters = require("./routers/newsRouter");
 const userRoutes = require("./routers/index");
+const swaggerJsdoc = require('./swaggerJsdoc')
 var cors = require("cors");
 require("./auth/auth");
 app.use(cors()); // Use this after the variable declaration
@@ -21,4 +22,5 @@ app.use(express.json());
 
 app.use(newsRouters);
 app.use(userRoutes);
+app.use(swaggerJsdoc);
 app.listen(PORT, () => console.log("Starting app in port",PORT));
