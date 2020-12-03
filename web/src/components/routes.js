@@ -7,4 +7,7 @@ export default {
   health: "/health",
   society: "/society",
   search: "/search",
+  national: "/national",
+  local: "/local",
+  tecnology: "/tecnology",
 };

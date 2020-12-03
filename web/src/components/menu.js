@@ -1,6 +1,9 @@
 import React from "react";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { AiOutlineLogin } from "react-icons/ai";
+import { SiGnuprivacyguard } from "react-icons/si";
+
 import Drawer from "@material-ui/core/Drawer";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
@@ -17,7 +20,10 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import { withRouter } from "react-router-dom";
 import SearchNews from "./searchNews";
 import { Button } from "@material-ui/core";
+import instance from "./utils/http";
+import { addNews } from "./actions/index";
 import { useSnackbar } from "notistack";
+import { connect } from "react-redux";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -60,12 +66,12 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
   },
   drawerHeader: {
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: "flex-end",
+    // display: "flex",
+    // alignItems: "center",
+    // padding: theme.spacing(0, 1),
+    // // necessary for content to be below app bar
+    // ...theme.mixins.toolbar,
+    // justifyContent: "flex-end",
   },
   content: {
     flexGrow: 1,
@@ -85,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Menu = ({ history }) => {
+const Menu = ({ history, addNews }) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -97,23 +103,31 @@ const Menu = ({ history }) => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  React.useEffect(() => {
-    handleDeleteSession();
-  });
-  const value = localStorage.getItem("token");
-  const expireSession = () => {
-    if (value) {
-      localStorage.clear();
-      history.push("/login");
-      enqueueSnackbar("Sessión Expirada", {
-        variant: "warning",
+  const handleNews = async (url) => {
+    await history.push(url);
+    await instance
+      .get(`/allthenews?search=Coronavirus&categories=ULTIMAS_NOTICIAS`)
+      .then((result) => {
+        addNews(result.data);
       });
-    }
   };
-  //the session will expire every 5 minutes
-  const handleDeleteSession = () => {
-    setTimeout(expireSession, 300000);
-  };
+  // React.useEffect(() => {
+  //   handleDeleteSession();
+  // });
+  // const value = localStorage.getItem("token");
+  // const expireSession = () => {
+  //   if (value) {
+  //     localStorage.clear();
+  //     history.push("/login");
+  //     enqueueSnackbar("Sessión Expirada", {
+  //       variant: "warning",
+  //     });
+  //   }
+  // };
+  // //the session will expire every 5 minutes
+  // const handleDeleteSession = () => {
+  //   setTimeout(expireSession, 300000);
+  // };
   const logout = () => {
     localStorage.clear();
     history.push("/login");
@@ -138,20 +152,20 @@ const Menu = ({ history }) => {
             <MenuIcon />
           </IconButton>
           <Typography noWrap>CORONAVIRUS HOY</Typography>
-          <Button
+          <IconButton
             onClick={() => history.push("/login")}
             color="inherit"
             size="large"
           >
-            Login
-          </Button>
-          <Button
+            <AiOutlineLogin />
+          </IconButton>
+          <IconButton
             onClick={() => history.push("/signup")}
             color="inherit"
             size="large"
           >
-            Registrarse
-          </Button>
+            <SiGnuprivacyguard />
+          </IconButton>
           <SearchNews className={classes.search} />
         </Toolbar>
       </AppBar>
@@ -176,28 +190,43 @@ const Menu = ({ history }) => {
         <Divider />
         <List>
           <ListItem button>
-            <ListItemIcon onClick={() => history.push("/society")}>
+            <ListItemIcon onClick={() => handleNews("/society")}>
               Sociedad
             </ListItemIcon>
           </ListItem>
           <ListItem button>
-            <ListItemIcon onClick={() => history.push("/economy")}>
+            <ListItemIcon onClick={() => handleNews("/economy")}>
               Economía
             </ListItemIcon>
           </ListItem>
           <ListItem button>
-            <ListItemIcon onClick={() => history.push("/politics")}>
+            <ListItemIcon onClick={() => handleNews("/politics")}>
               Politica
             </ListItemIcon>
           </ListItem>
           <ListItem button>
-            <ListItemIcon onClick={() => history.push("/international")}>
+            <ListItemIcon onClick={() => handleNews("/international")}>
               Internacionales
             </ListItemIcon>
           </ListItem>
           <ListItem button>
-            <ListItemIcon onClick={() => history.push("/health")}>
+            <ListItemIcon onClick={() => handleNews("/health")}>
               Salud
+            </ListItemIcon>
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon onClick={() => handleNews("/national")}>
+              Nacionales
+            </ListItemIcon>
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon onClick={() => handleNews("/local")}>
+              Locales
+            </ListItemIcon>
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon onClick={() => handleNews("/tecnology")}>
+              Tecnología
             </ListItemIcon>
           </ListItem>
           <ListItem button>
@@ -215,4 +244,9 @@ const Menu = ({ history }) => {
     </div>
   );
 };
-export default withRouter(Menu);
+function mapDispatchToProps(dispatch) {
+  return {
+    addNews: (news) => dispatch(addNews(news)),
+  };
+}
+export default connect(null, mapDispatchToProps)(withRouter(Menu));

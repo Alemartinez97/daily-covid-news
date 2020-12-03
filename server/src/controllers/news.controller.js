@@ -1,8 +1,9 @@
 const express = require("express");
 const axios = require("axios");
 var moment = require("moment");
+require('dotenv').config()
 const { News } = require("../models/News");
-const apiKey = "9049dd7d1d324e55a8488e3b545aba7f";
+// const apiKey = "f36f0dc2f3204a3c821130384e208604";
 let dates = [0];
 let variant1 = [0];
 let variant2 = [0];
@@ -75,10 +76,10 @@ exports.news = async (req, res) => {
       pagination
     );
     if (dates.length > 1) {
-      res.status(201).send(dates);
+      res.status(200).send(dates);
     }
     const body = await axios.get(
-      `https://api.jornalia.net/api/v1/articles?apiKey=${apiKey}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`
+      `https://api.jornalia.net/api/v1/articles?apiKey=${process.env.API_KEY}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`
     );
     // timeCall = body.headers.date;
     for (let s = 0; s < body.data.articles.length; s++) {
@@ -120,14 +121,13 @@ exports.news = async (req, res) => {
 };
 exports.allthenews = async (req, res) => {
   try {
-    const { search, providers, categories, startDate, endDate } = req.query;
+    const { search, categories } = req.query;
     await handleDeleteWithMoreThanFiveDays();
     const body = await axios.get(
-      `https://api.jornalia.net/api/v1/articles?apiKey=${apiKey}&providers=${providers}&search=${search}&categories=${categories}&startDate=${startDate}&endDate=${endDate}`
+      `https://api.jornalia.net/api/v1/articles?apiKey=${process.env.API_KEY}&search=${search}&category=${categories}`
     );
     for (let s = 0; s < body.data.articles.length; s++) {
       const {
-        _id,
         category,
         title,
         description,
@@ -149,7 +149,7 @@ exports.allthenews = async (req, res) => {
       await handleRemoveRepeats(title);
     }
 
-    const all = await News.find({ title: { $regex: "coronavirus" } });
+    const all = await News.find({ title: { $regex: "Coronavirus" } });
 
     res.status(200).send(all);
   } catch (error) {

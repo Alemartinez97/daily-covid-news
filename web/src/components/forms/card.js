@@ -62,6 +62,7 @@ export default function MediaControlCard({ news }) {
           </Grid>
         );
       })}
+      
       {/* <Pagination count={10} color="primary" /> */}
     </>
   );

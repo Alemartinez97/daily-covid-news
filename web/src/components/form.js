@@ -130,7 +130,7 @@ const Form = (props) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
               value={data.startDate}
               onChange={(e) =>
@@ -147,7 +147,7 @@ const Form = (props) => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
               value={data.endDate}
               onChange={(e) =>

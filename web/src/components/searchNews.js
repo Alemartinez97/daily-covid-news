@@ -4,6 +4,7 @@ import MaterialTable, { MTableEditField } from "material-table";
 import Form from "./form";
 import { connect } from "react-redux";
 import api from "./utils/api";
+import instance from "./utils/http";
 import { setSearchNews } from "./actions/index";
 import { makeStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
@@ -60,7 +61,15 @@ const SearchNews = (props) => {
     if (searchNews.providers === "Telam") {
       setProvider("Télam");
     }
-    return api
+    const token = localStorage.getItem("token");
+    const options = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: "Bearer " + `${token}`,
+      },
+    };
+    debugger;
+    return instance
       .get(
         `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}&order=-1`
       )
@@ -72,11 +81,11 @@ const SearchNews = (props) => {
         setOpen(false);
         history.push("/search");
       })
-      .catch((err) => {
-        enqueueSnackbar("Error, La busqueda no se realizo. " + err.msg, {
+      .catch((response) => {
+        enqueueSnackbar("Error, La busqueda no se realizo. " + response, {
           variant: "error",
         });
-        console.error("Mutation error:", err);
+        console.error("Mutation error:", response);
       });
   };
   const body = (

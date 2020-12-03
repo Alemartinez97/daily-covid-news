@@ -10,7 +10,7 @@ app.use(cors()); // Use this after the variable declaration
 
 const PORT = 4000;
 
-const MONGO_URI = "mongodb://127.0.0.1:27017/passport-jwt";
+const MONGO_URI = "mongodb://127.0.0.1:27017/midas-consultores";
 mongoose.connect(MONGO_URI, {
   useUnifiedTopology: true,
   useNewUrlParser: true,

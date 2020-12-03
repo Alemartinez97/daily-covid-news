@@ -4,7 +4,6 @@ const moment = require("moment");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
-/* GET home page. */
 router.get("/", function (req, res, next) {
   res.send("Succes");
 });
@@ -34,6 +33,8 @@ router.post("/login", async (req, res, next) => {
         const body = {
           _id: user._id,
           email: user.email,
+          iat: moment().unix(),
+          exp: moment().add(5, "minutes").unix(),
         };
         const token = jwt.sign(body, "top_secret");
         return res.json({ token });
