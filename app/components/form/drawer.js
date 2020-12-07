@@ -23,7 +23,7 @@ const Drawer = ({ navigation }) => {
   return (
     <View>
       <Appbar.Header>
-        <Appbar.Content title="Corovanirus Hoy"  />
+        <Appbar.Content title="Coronavirus Hoy"  />
         <Appbar.Action
           icon="magnify"
           onPress={() => navigation.navigate("search")}
