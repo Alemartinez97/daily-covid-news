@@ -1,34 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {createAppContainer} from 'react-navigation';
-import {Provider} from 'react-redux';
-import {createStore} from 'redux';
-import AppNavigator from './components/AppNavigator';
-import reducers from './reducers';
-import {getFilters} from './utils/storage';
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import Drawer from "./components/form/drawer";
+import Login from "./components/login";
+import AppNavigator from "./components/AppNavigator";
+export default function App() {
+  return <AppNavigator theme="light" />;
+}
 
-const initialStore = createStore(reducers);
-const AppContainer = createAppContainer(AppNavigator);
-
-const App = () => {
-  const [store, setStore] = useState(null);
-
-  useEffect(() => {
-    getFilters().then(filters => {
-      setStore(
-        createStore(reducers, {
-          filter: filters,
-        }),
-      );
-    });
-  }, [true]);
-
-  return store ? (
-    <Provider store={store}>
-      <AppContainer theme="light" />
-    </Provider>
-  ) : null;
-};
-
-console.disableYellowBox = true;
-
-export default App;
+const styles = StyleSheet.create({
+  container: {},
+});

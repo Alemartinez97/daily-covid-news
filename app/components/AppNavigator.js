@@ -1,33 +1,27 @@
-import {createSwitchNavigator} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Login from "./login";
+import Register from "./register";
+import Search from "./form/search";
+import Home from "./form/drawer";
+const Stack = createStackNavigator();
 
-import Home from './Home';
-import Filters from './Filters';
-import EventDetails from './EventDetails';
-import LocationPicker from './LocationPicker';
-import Login from './Login';
-import ListFavorites from './ListFavorites';
-const AppNavigator = createStackNavigator(
-  {
-    Filters,
-    Home,
-    EventDetails,
-    LocationPicker,
-    ListFavorites,
-  },
-  {
-    headerMode: 'none',
-  },
-);
+const AppNavigator = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+      <Stack.Screen name="login" component={Login} />
+      <Stack.Screen
+          name="home"
+          component={Home}
+          // options={{ title: "Coronavirus Hoy" }}
+        />
+        <Stack.Screen name="search" component={Search} />
 
-export default createSwitchNavigator(
-  {
-    Login,
-    App: AppNavigator,
-  },
-  {
-    initialRouteName: 'Login',
-  },
-);
-
-// export default AppNavigator;
+        <Stack.Screen name="register" component={Register} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+export default AppNavigator;
