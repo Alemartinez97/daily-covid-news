@@ -45,7 +45,7 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.wrapper}>
       <Text h4 style={styles.info}>
-        Sing out
+        Sign in
       </Text>
       <Icon name="sign-in" size={30} color="#900" />
       <Input placeholder="Email" onChangeText={(value) => setEmail(value)} />
