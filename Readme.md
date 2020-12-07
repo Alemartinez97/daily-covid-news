@@ -11,3 +11,8 @@
     > cd src
     > npm i -s
     > npm start
+
+## steps to start the app
+    > cd app
+    > npm i -s
+    > npm start

@@ -63,7 +63,6 @@ const Login = (props) => {
           const token = result.data.token.replace(/[ '"]+/g, " ");
           localStorage.setItem("token", token);
         }
-        console.log(localStorage);
         enqueueSnackbar("Usuario " + email + " inicio  sesión con exito ", {
           variant: "success",
         });

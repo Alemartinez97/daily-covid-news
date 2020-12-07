@@ -68,7 +68,6 @@ const SearchNews = (props) => {
         Authorization: "Bearer " + `${token}`,
       },
     };
-    debugger;
     return instance
       .get(
         `/news?providers=${searchNews.providers}&search=${searchNews.search}&searchindataclass=${provider}&categories=${searchNews.category}&startDate=${searchNews.startDate}&endDate=${searchNews.endDate}&page=2&limit=5&order=-1`

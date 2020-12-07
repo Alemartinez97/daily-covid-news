@@ -9,6 +9,7 @@ const middleware = require("../middleware/auth");
  *      description: service to search news by filter
  */
 router.get("/news", middleware, controller.news);
+router.get("/newsRn", middleware, controller.newsRn);
 router.get("/allthenews", middleware, controller.allthenews);
 
 module.exports = router;

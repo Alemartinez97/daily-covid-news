@@ -133,6 +133,7 @@ exports.news = async (req, res) => {
     res.status(400).send({ mensaje: "customer error" });
   }
 };
+//service to bring the latest news data
 exports.allthenews = async (req, res) => {
   try {
     const { search, categories } = req.query;
@@ -166,6 +167,73 @@ exports.allthenews = async (req, res) => {
     const all = await News.find({ title: { $regex: "Coronavirus" } });
 
     res.status(200).send(all);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send({ mensaje: "customer error" });
+  }
+};
+//service to bring data for the mobile application
+exports.newsRn = async (req, res) => {
+  let dataSearch = [0];
+  try {
+    const { search } = req.query;
+    dataSearch = await News.find({
+      title: { $regex: search },
+      publishedAt: {
+        $gte: moment().subtract(2, "days").format(),
+        $lt: moment().format(),
+      },
+    });
+    const count = await News.countDocuments();
+    if (dataSearch.length > 1) {
+      res.status(200).send({
+        dataSearch,
+        // totalPages: Math.ceil(count / limit),
+        // currentPage: page,
+      });
+    }
+    const body = await axios.get(
+      `https://api.jornalia.net/api/v1/articles?apiKey=${
+        process.env.API_KEY
+      }&search=${search}&startDate=${moment()
+        .subtract(2, "days")
+        .form()}&endDate=${moment().format()}`
+    );
+    // timeCall = body.headers.date;
+    for (let s = 0; s < body.data.articles.length; s++) {
+      const {
+        category,
+        title,
+        description,
+        publishedAt,
+        imageUrl,
+        sourceUrl,
+      } = body.data.articles[s];
+
+      const news = new News({
+        provider: body.data.articles[s].provider.name,
+        category: category,
+        title: title,
+        description: description,
+        publishedAt: moment(publishedAt).format(),
+        imageUrl: imageUrl,
+        sourceUrl: sourceUrl,
+      });
+      await news.save();
+      await handleRemoveRepeats(title);
+    }
+    dataSearch = await News.find({
+      title: { $regex: search },
+      publishedAt: {
+        $gte: moment().subtract(2, "days").format(),
+        $lt: moment().format(),
+      },
+    });
+    res.status(200).send({
+      dataSearch,
+      // totalPages: Math.ceil(count / limit),
+      // currentPage: page,
+    });
   } catch (error) {
     console.error(error);
     res.status(400).send({ mensaje: "customer error" });
